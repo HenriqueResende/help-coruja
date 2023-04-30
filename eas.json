@@ -1,0 +1,19 @@
+{
+    "build": {
+      "help-coruja-teste": {
+        "android": {
+          "buildType": "apk"
+        }
+      },
+      "help-coruja-teste2": {
+        "android": {
+          "gradleCommand": ":app:assembleRelease"
+        }
+      },
+      "help-coruja-teste3": {
+        "developmentClient": true
+      },
+      "production": {}
+    }
+  }
+  
