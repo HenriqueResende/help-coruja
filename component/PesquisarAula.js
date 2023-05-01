@@ -63,7 +63,7 @@ export default function PesquisarAula() {
       console.log(error);
     }
   };
-  
+
   const getAulas = async () => {
     try {
       const response = await fetch(
@@ -208,7 +208,7 @@ export default function PesquisarAula() {
             selectedValue={materia}
             onValueChange={setMateria}
           >
-            <Picker.Item label="Matéria" value={null} />
+            <Picker.Item label="Matéria" value={''} />
             {materiaOptions.map((element) => {
               return (
                 <Picker.Item key={element} label={element} value={element} />
