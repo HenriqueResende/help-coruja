@@ -22,7 +22,7 @@ export default function PesquisarAula() {
   }, []);
 
   const semestreOptions = [
-    { label: "Semestre", value: null },
+    { label: "Semestre", value: '' },
     { label: "1º Semestre", value: 1 },
     { label: "2º Semestre", value: 2 },
     { label: "3º Semestre", value: 3 },
@@ -63,6 +63,7 @@ export default function PesquisarAula() {
       console.log(error);
     }
   };
+  
   const getAulas = async () => {
     try {
       const response = await fetch(
@@ -92,10 +93,11 @@ export default function PesquisarAula() {
       console.log(error);
     }
   };
+
   const getHorario = async () => {
     try {
       const response = await fetch(
-        `https://help-coruja.azurewebsites.net/api/aula/getAula?horario=${DataInicio}}`
+        `https://help-coruja.azurewebsites.net/api/aula/getAula?datainicio=${DataInicio}&horariofim=${DataFim}}`
       );
 
       const data = await response.json();
@@ -106,6 +108,7 @@ export default function PesquisarAula() {
       console.log(error);
     }
   };
+
   const getContato = async () => {
     try {
       const response = await fetch(
@@ -159,7 +162,25 @@ export default function PesquisarAula() {
       ></View>
     );
   };
+
   const renderiza = ({ item }) => {
+    const startDate = new Date(item.DataInicio);
+    const endDate = new Date(item.DataFim);
+    const formattedStartDate = startDate.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const formattedEndDate = endDate.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
     return (
       <View>
         <Text style={styles.textoRender}>
@@ -167,12 +188,16 @@ export default function PesquisarAula() {
           Tutor: {item.NomeTutor} {item.Semestre}º Semestre{" "}
         </Text>
         <Text style={styles.textoRender}> Tutoria de {item.Materia}</Text>
-        <Text style={styles.textoRender}> Horário: {item.DataInicio} </Text>
+        <Text style={styles.textoRender}>
+          {" "}
+          Horário: de {formattedStartDate} até {formattedEndDate}
+        </Text>
         <Text style={styles.textoRender}> Contatos: {item.Contato} </Text>
         <Text style={{ justifyContent: "flex-end" }}></Text>
       </View>
     );
   };
+
   return (
     <View style={styles.fundo}>
       <View style={styles.container}>
@@ -226,6 +251,7 @@ export default function PesquisarAula() {
           </Picker>
         </View>
       </View>
+
       <View style={styles.buttonListContainer}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={handleSearch}>
