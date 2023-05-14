@@ -1,8 +1,8 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-
-import Home from "./component/Home";
+import HomeScreen from "./component/Home";
+import Login from "./component/Login";
 
 export default function App() {
-  return <Home />;
+  return (
+      <Login/>
+  );
 }

@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { View, Text, StyleSheet, Button, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { tokenContext } from "../context/tokenContext";
 
+import Cadastrar from "./Cadastrar";
+import Logar from "./Logar";
 import PesquisarAula from "./PesquisarAula";
 import CadastrarTutor from "./CadastrarTutor";
 import TutoriasCadastradas from "./TutoriasCadastradas";
 import CadastrarTutoria from "./CadastrarTutoria";
+import { HomeScreen } from "./Home";
 
 const Pilha = createNativeStackNavigator();
 
-export function HomeScreen(props) {
-  const [isTutor, setIsTutor] = useState(true);
-
+function Login(props) {
   return (
     <View style={styles.fundo}>
       <Text style={styles.texto}>Help Coruja</Text>
@@ -20,34 +22,36 @@ export function HomeScreen(props) {
       <View style={styles.botão}>
         <Button
           color="#9F9A4D"
-          title="Pesquisar Aula"
-          onPress={() => props.navigation.navigate("PesquisarAula")}
+          title="Login"
+          onPress={() => props.navigation.navigate("Logar")}
         />
       </View>
       <View style={styles.botão}>
         <Button
           color="#9F9A4D"
-          title="Cadastrar Tutor"
-          onPress={() => props.navigation.navigate("CadastrarTutor")}
+          title="Cadastre-se"
+          onPress={() => props.navigation.navigate("Cadastrar")}
         />
       </View>
-      {isTutor && (
-        <View style={styles.botão}>
-          <Button
-            color="#9F9A4D"
-            title="Suas Tutorias"
-            onPress={() => props.navigation.navigate("TutoriasCadastradas")}
-          />
-        </View>
-      )}
     </View>
   );
 }
 
-function Home() {
+export default function TelaLogin() {
+  const [token, setToken] = React.useState("");
+
   return (
     <NavigationContainer independent={true}>
       <Pilha.Navigator>
+        <Pilha.Screen
+          name="Login" component={Login} options={{ headerShown: false }}
+        />
+        <Pilha.Screen
+          name="Logar" component={Logar} options={{ headerShown: false }}
+        />
+        <Pilha.Screen
+          name="Cadastrar" component={Cadastrar} options={{ headerShown: false }}
+        />
         <Pilha.Screen
           name="HomeScreen" component={HomeScreen} options={{ headerShown: false }}
         />
@@ -64,8 +68,6 @@ function Home() {
     </NavigationContainer>
   );
 }
-export default Home;
-
 const styles = StyleSheet.create({
   fundo: {
     flex: 1,
@@ -83,6 +85,7 @@ const styles = StyleSheet.create({
   botão: {
     width: 200,
     marginBottom: 5,
+    color: "#9F9A4D",
   },
   imagem: {
     width: 200,
