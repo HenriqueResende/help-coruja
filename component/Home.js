@@ -44,28 +44,6 @@ export function HomeScreen(props) {
   );
 }
 
-function Home() {
-  return (
-    <NavigationContainer independent={true}>
-      <Pilha.Navigator>
-        <Pilha.Screen
-          name="HomeScreen" component={HomeScreen} options={{ headerShown: false }}
-        />
-        <Pilha.Screen 
-          name="PesquisarAula" component={PesquisarAula} />
-        <Pilha.Screen 
-          name="CadastrarTutor" component={CadastrarTutor} />
-        <Pilha.Screen
-          name="TutoriasCadastradas" component={TutoriasCadastradas}
-        />
-        <Pilha.Screen 
-          name="CadastrarTutoria" component={CadastrarTutoria} />
-      </Pilha.Navigator>
-    </NavigationContainer>
-  );
-}
-export default Home;
-
 const styles = StyleSheet.create({
   fundo: {
     flex: 1,

@@ -6,79 +6,43 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
-  Button,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { TextInputMask } from "react-native-masked-text";
-import moment from "moment";
 import { useNavigation } from "@react-navigation/native";
+import { useToken } from "../context/tokenContext";
 
 export default function TutoriasCadastradas() {
-  const [materia, setMateria] = useState("");
-  const [semestre, setSemestre] = useState("");
-  const [date, setDate] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [materiaOptions, setMateriaOptions] = useState([]);
-  const navigation = useNavigation();
+  const navigation = useNavigation();  
+  const { token, ra } = useToken()
+
   const handleCriarTutoria = () => {
     // Navigate to the home screen
     navigation.navigate("CadastrarTutoria");
   };
-  const semestreOptions = [
-    { label: "Semestre", value: "" },
-    { label: "1º Semestre", value: 1 },
-    { label: "2º Semestre", value: 2 },
-    { label: "3º Semestre", value: 3 },
-    { label: "4º Semestre", value: 4 },
-    { label: "5º Semestre", value: 5 },
-    { label: "6º Semestre", value: 6 },
-    { label: "7º Semestre", value: 7 },
-    { label: "8º Semestre", value: 8 },
-    { label: "9º Semestre", value: 9 },
-    { label: "10º Semestre", value: 10 },
-  ];
 
   useEffect(() => {
-    getMaterias();
+    getAulas();
   }, []);
 
   const handleSearch = () => {
     getAulas();
   };
 
-  const getMaterias = async () => {
-    try {
-      const response = await fetch(
-        "https://help-coruja.azurewebsites.net/api/materia/getMateria"
-      );
-
-      const data = await response.json();
-
-      setMateriaOptions(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const getAulas = async () => {
     try {
-      let dateConv = moment(date, "DD/MM/YYYY HH:mm")
-        .add(-new Date().getTimezoneOffset(), "minutes")
-        .toDate();
-
-      let dateHasValue = dateConv != undefined && !isNaN(dateConv.getTime());
-      let formattedDate = null;
-
-      if (dateHasValue) formattedDate = dateConv.toISOString();
-
       const response = await fetch(
-        `https://help-coruja.azurewebsites.net/api/aula/getAula?materia=${materia}&semestre=${semestre}` +
-          (dateHasValue ? `&data=${formattedDate}` : "")
+        `https://help-coruja.azurewebsites.net/api/aula/getAulaTutor?ra=${ra}`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+        }
       );
 
       const data = await response.json();
 
-      setSelectedOptions(data);
+      setSelectedOptions(JSON.parse(data.json));
     } catch (error) {
       console.log(error);
     }

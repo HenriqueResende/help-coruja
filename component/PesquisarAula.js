@@ -10,16 +10,19 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { TextInputMask } from 'react-native-masked-text';
 import moment from 'moment';
+import { useToken } from "../context/tokenContext";
 
 export default function PesquisarAula() {
   const [materia, setMateria] = useState("");
   const [semestre, setSemestre] = useState("");
   const [date, setDate] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [materiaOptions, setMateriaOptions] = useState([]);
+  const [materiaOptions, setMateriaOptions] = useState([]);  
+  const { token } = useToken()
 
   useEffect(() => {
     getMaterias();
+    getAulas();
   }, []);
 
   const semestreOptions = [
@@ -42,13 +45,18 @@ export default function PesquisarAula() {
 
   const getMaterias = async () => {
     try {
-      const response = await fetch(
-        "https://help-coruja.azurewebsites.net/api/materia/getMateria"
-      );
+      const response = await fetch('https://help-coruja.azurewebsites.net/api/materia/getMateria', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+      });
 
       const data = await response.json();
 
-      setMateriaOptions(data);
+      setMateriaOptions(JSON.parse(data.json));
+
     } catch (error) {
       console.log(error);
     }
@@ -65,12 +73,18 @@ export default function PesquisarAula() {
         formattedDate = dateConv.toISOString();
 
       const response = await fetch(
-        `https://help-coruja.azurewebsites.net/api/aula/getAula?materia=${materia}&semestre=${semestre}` + (dateHasValue ? `&data=${formattedDate}` : '')
+        `https://help-coruja.azurewebsites.net/api/aula/getAula?materia=${materia}&semestre=${semestre}` + (dateHasValue ? `&data=${formattedDate}` : ''), {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+        }
       );
 
       const data = await response.json();
 
-      setSelectedOptions(data);
+      setSelectedOptions(JSON.parse(data.json));
 
     } catch (error) {
       console.log(error);

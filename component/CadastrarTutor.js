@@ -8,14 +8,18 @@ import {
   TextInput,
   Alert,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
+import { useToken } from "../context/tokenContext";
 
 export default function CadastrarTutor() {
-  const [materia, setMateria] = useState("");
+  const [curso, setCurso] = useState("");
   const [semestre, setSemestre] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [materiaOptions, setMateriaOptions] = useState([]);
+  const [cursoOptions, setCursoOptions] = useState([]);
   const [contato, setContato] = useState("");
+  const navigation = useNavigation();
+  const { token, ra } = useToken()
 
   const semestreOptions = [
     { label: "Semestre", value: "" },
@@ -32,7 +36,7 @@ export default function CadastrarTutor() {
   ];
 
   useEffect(() => {
-    getMaterias();
+    getCurso();
   }, []);
 
   const postTutor = async () => {
@@ -44,23 +48,20 @@ export default function CadastrarTutor() {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          'Authorization': 'Bearer ' + token
         },
         body: JSON.stringify({
-          codigoCurso: "materia",
-          semestre: "semestre",
-          contato: "contato",
+          ra: ra,
+          codigoCurso: curso,
+          semestre: semestre,
+          contato: contato,
         }),
       }
     );
 
     const data = await response.json();
 
-    //token
-    let token = data.token;
-
-    console.log(token);
-
-    return response;
+    return data;
   };
 
   const handleCadastro = async () => {
@@ -74,15 +75,22 @@ export default function CadastrarTutor() {
     }
   };
 
-  const getMaterias = async () => {
+  const getCurso = async () => {
     try {
       const response = await fetch(
-        "https://help-coruja.azurewebsites.net/api/materia/getMateria"
+        "https://help-coruja.azurewebsites.net/api/curso/getCurso", {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+        }
       );
 
       const data = await response.json();
 
-      setMateriaOptions(data);
+      setCursoOptions(JSON.parse(data.json));
+
     } catch (error) {
       console.log(error);
     }
@@ -94,15 +102,15 @@ export default function CadastrarTutor() {
         <View style={styles.container}>
           <View style={styles.pickerContainer}>
             <Picker
-              key={materia}
-              prompt="Matéria"
-              selectedValue={materia}
-              onValueChange={setMateria}
+              key={curso}
+              prompt="Curso"
+              selectedValue={curso}
+              onValueChange={setCurso}
             >
-              <Picker.Item label="Matéria" value={""} />
-              {materiaOptions.map((element) => {
+              <Picker.Item label="Curso" value={""} />
+              {cursoOptions.map((element) => {
                 return (
-                  <Picker.Item key={element} label={element} value={element} />
+                  <Picker.Item key={element.Codigo} label={element.Nome} value={element.Codigo} />
                 );
               })}
             </Picker>

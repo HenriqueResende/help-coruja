@@ -11,11 +11,13 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import HomeScreen from "./Home";
+import { useToken } from "../context/tokenContext";
 
 function Logar() {
   const [ra, setRA] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
+  const { defToken, defRa } = useToken();
 
   useEffect(() => {});
 
@@ -30,8 +32,8 @@ function Logar() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ra: "ra",
-          senha: "password",
+          ra: ra,
+          senha: password,
         }),
       }
     );
@@ -41,9 +43,10 @@ function Logar() {
     //token
     let token = data.token;
 
-    console.log(token);
+    defToken(token);
+    defRa(ra);
 
-    return response;
+    return data;
   };
   const handleLogin = async () => {
     const response = await postLogin();

@@ -27,19 +27,15 @@ function Cadastrar({ navigation }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nome: "name",
-          ra: "ra",
-          senha: "password",
+          nome: name,
+          ra: ra,
+          senha: password,
         }),
       }
     );
 
-    const data = await response.json();
+    await response.json();
 
-    //token
-    let token = data.token;
-
-    console.log(token);
     return response;
   };
 
