@@ -68,7 +68,7 @@ export default function CadastrarTutor() {
     const response = await postTutor();
 
     if (response.status === 200) {
-      Alert.alert("Cadastrado com sucesso");
+      Alert.alert("Cadastrado com sucesso, Agora você pode criar Tutorias.");
       navigation.navigate("HomeScreen");
     } else {
       Alert.alert("ERRO! Algo deu errado :(");

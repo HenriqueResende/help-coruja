@@ -46,17 +46,23 @@ function Logar() {
     defToken(token);
     defRa(ra);
 
-    return data;
+    if (response.status === 200) {
+      const data = await response.json();
+      return data;
+    } else {
+      const errorData = await response.json();
+      throw new Error(`${response.status} - ${response.mensagem}`);
+    }
+
   };
   const handleLogin = async () => {
+    try {
     const response = await postLogin();
-    console.log(response.status);
-    if (response.status === 200) {
-      Alert.alert("Logado com sucesso");
-      navigation.navigate("HomeScreen");
-    } else {
-      Alert.alert("ERRO! Algo deu errado :(");
-    }
+    Alert.alert("Logado com sucesso");
+    navigation.navigate("HomeScreen");
+  } catch (error) {
+    Alert.alert("ERRO!", error.message);
+  }
   };
 
   const handleCadastro = () => {

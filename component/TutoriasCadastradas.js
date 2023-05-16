@@ -73,7 +73,7 @@ export default function TutoriasCadastradas() {
             fontSize: 16,
           }}
         >
-          Aulas Disponíveis
+          Suas Tutotias Cadastradas
         </Text>
       </View>
     );
@@ -136,11 +136,6 @@ export default function TutoriasCadastradas() {
     <ScrollView>
       <View style={styles.fundo}>
         <View style={[styles.buttonListContainer, { marginTop: 30 }]}>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={handleSearch}>
-              <Text style={styles.buttonText}>Aplicar Filtro</Text>
-            </TouchableOpacity>
-          </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.button}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Alert } from "react";
+import React, { useState, useEffect} from "react";
 import {
   View,
   Text,
@@ -6,49 +6,41 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { TextInputMask } from "react-native-masked-text";
 import moment from "moment";
+import { useToken } from "../context/tokenContext";
 
 export default function CadastrarTutoria() {
   const [materia, setMateria] = useState("");
-  const [semestre, setSemestre] = useState("");
-  const [date, setDate] = useState("");
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [materiaOptions, setMateriaOptions] = useState([]);
+  const { token, ra, semestre } = useToken()
 
-  const semestreOptions = [
-    { label: "Semestre", value: "" },
-    { label: "1º Semestre", value: 1 },
-    { label: "2º Semestre", value: 2 },
-    { label: "3º Semestre", value: 3 },
-    { label: "4º Semestre", value: 4 },
-    { label: "5º Semestre", value: 5 },
-    { label: "6º Semestre", value: 6 },
-    { label: "7º Semestre", value: 7 },
-    { label: "8º Semestre", value: 8 },
-    { label: "9º Semestre", value: 9 },
-    { label: "10º Semestre", value: 10 },
-  ];
+
 
   useEffect(() => {
     getMaterias();
   }, []);
 
-  const handleSearch = () => {
-    getAulas();
-  };
-
   const getMaterias = async () => {
     try {
-      const response = await fetch(
-        "https://help-coruja.azurewebsites.net/api/materia/getMateria"
-      );
+      const response = await fetch('https://help-coruja.azurewebsites.net/api/materia/getMateria', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+      });
 
       const data = await response.json();
 
-      setMateriaOptions(data);
+      setMateriaOptions(JSON.parse(data.json));
+
     } catch (error) {
       console.log(error);
     }
@@ -57,66 +49,42 @@ export default function CadastrarTutoria() {
   const postTutoria = async () => {
     //Api para o login, ela retorna o token para fazer as outras chamadas
     const response = await fetch(
-      "https://help-coruja.azurewebsites.net/api/tutor/setTutor",
+      "https://help-coruja.azurewebsites.net/api/aula/setAula",
       {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          'Authorization': 'Bearer ' + token
         },
         body: JSON.stringify({
-          ra: "ra",
-          materia: "materia",
-          dataInicio: "Date",
-          dataFim: "Date",
+          ra: ra,
+          materia: materia,
+          dataInicio: dataInicio,
+          dataFim: dataFim,
         }),
       }
     );
-
-    const data = await response.json();
-
-    //token
-    let token = data.token;
-
-    console.log(token);
-
-    return response;
+    if (response.status === 200) {
+      const data = await response.json();
+      return data;
+    } else {
+      const errorData = await response.json();
+      throw new Error(`${response.status} - ${errorData.message}`);
+    }
   };
 
   const handleCadastro = async () => {
-    const response = await postTutoria();
-
-    if (response.status === 200) {
+    try {
+      const response = await postTutoria();
       Alert.alert("Cadastrado com sucesso");
       navigation.navigate("TutoriasCadastradas");
-    } else {
-      Alert.alert("ERRO! Algo deu errado :(");
-    }
-  };
-
-  const getAulas = async () => {
-    try {
-      let dateConv = moment(date, "DD/MM/YYYY HH:mm")
-        .add(-new Date().getTimezoneOffset(), "minutes")
-        .toDate();
-
-      let dateHasValue = dateConv != undefined && !isNaN(dateConv.getTime());
-      let formattedDate = null;
-
-      if (dateHasValue) formattedDate = dateConv.toISOString();
-
-      const response = await fetch(
-        `https://help-coruja.azurewebsites.net/api/aula/getAula?materia=${materia}&semestre=${semestre}` +
-          (dateHasValue ? `&data=${formattedDate}` : "")
-      );
-
-      const data = await response.json();
-
-      setSelectedOptions(data);
     } catch (error) {
-      console.log(error);
+      Alert.alert("ERRO!", error.message);
     }
   };
+
+  
 
   return (
     <ScrollView>
@@ -139,33 +107,38 @@ export default function CadastrarTutoria() {
           </View>
         </View>
         <View style={styles.container}>
-          <View style={styles.pickerContainer}>
-            <Picker
-              key={semestre}
-              prompt="Semestre"
-              selectedValue={semestre}
-              onValueChange={setSemestre}
-            >
-              {semestreOptions.map((option) => (
-                <Picker.Item
-                  key={option.value}
-                  label={option.label}
-                  value={option.value}
-                />
-              ))}
-            </Picker>
-          </View>
+
         </View>
         <View style={styles.container}>
+          <View style={styles.textoRender}><Text>Data e Hora do Inicio da Tutoria</Text></View>
+ 
           <View style={styles.buttonDataContainer}>
             <TextInputMask
               type={"datetime"}
               options={{
                 format: "DD/MM/YYYY HH:mm",
               }}
-              value={date}
+              value={dataInicio}
               onChangeText={(value) => {
-                setDate(value);
+                setDataInicio(value);
+              }}
+              min={new Date(1753, 1, 1)}
+              max={new Date(9999, 12, 31)}
+              placeholder="DD/MM/YYYY HH:mm"
+            />
+          </View>
+        </View>
+        <View style={styles.container}>
+        <View style={styles.textoRender}><Text>Data e Hora do Fim da Tutoria</Text></View>
+          <View style={styles.buttonDataContainer}>
+            <TextInputMask
+              type={"datetime"}
+              options={{
+                format: "DD/MM/YYYY HH:mm",
+              }}
+              value={dataFim}
+              onChangeText={(value) => {
+                setDataFim(value);
               }}
               min={new Date(1753, 1, 1)}
               max={new Date(9999, 12, 31)}
