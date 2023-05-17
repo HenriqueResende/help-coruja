@@ -1,17 +1,46 @@
+import { getStateFromPath } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Button, Image } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { getApplication } from "react-native-web/dist/cjs/exports/AppRegistry/renderApplication";
 
-import PesquisarAula from "./PesquisarAula";
-import CadastrarTutor from "./CadastrarTutor";
-import TutoriasCadastradas from "./TutoriasCadastradas";
-import CadastrarTutoria from "./CadastrarTutoria";
-
-const Pilha = createNativeStackNavigator();
 
 export function HomeScreen(props) {
   const [isTutor, setIsTutor] = useState(true);
+
+  useEffect(() => {
+    getTutor();
+  }, []);
+
+
+  const getTutor = async () => {
+    try {
+      const response = await fetch(`https://help-coruja.azurewebsites.net/api/tutor/getTutor?ra=${ra}`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+      });
+
+      const data = await response.json();
+      console.log('Data:', data);
+      const isUserTutor = data.length > 0;
+      console.log('Is User Tutor:', isUserTutor);
+      
+      const setTutor = isUserTutor;
+      if(setTutor.length>0){
+        setIsTutor = true
+      }
+      else{
+        setIsTutor = false
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+
+  };
+
 
   return (
     <View style={styles.fundo}>
@@ -24,13 +53,15 @@ export function HomeScreen(props) {
           onPress={() => props.navigation.navigate("PesquisarAula")}
         />
       </View>
-      <View style={styles.botão}>
-        <Button
-          color="#9F9A4D"
-          title="Cadastrar Tutor"
-          onPress={() => props.navigation.navigate("CadastrarTutor")}
-        />
-      </View>
+      {!isTutor && (
+        <View style={styles.botão}>
+          <Button
+            color="#9F9A4D"
+            title="Cadastrar Tutor"
+            onPress={() => props.navigation.navigate("CadastrarTutor")}
+          />
+        </View>
+      )}
       {isTutor && (
         <View style={styles.botão}>
           <Button

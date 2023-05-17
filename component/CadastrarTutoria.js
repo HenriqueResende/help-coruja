@@ -48,6 +48,15 @@ export default function CadastrarTutoria() {
 
   const postTutoria = async () => {
     //Api para o login, ela retorna o token para fazer as outras chamadas
+
+    let dateConv = moment(date, 'DD/MM/YYYY HH:mm').add(-(new Date().getTimezoneOffset()), 'minutes').toDate()
+
+    let dateHasValue = dateConv != undefined && !isNaN(dateConv.getTime())
+    let formattedDate = null
+
+    if (dateHasValue)
+      formattedDate = dateConv.toISOString();
+
     const response = await fetch(
       "https://help-coruja.azurewebsites.net/api/aula/setAula",
       {
@@ -60,34 +69,45 @@ export default function CadastrarTutoria() {
         body: JSON.stringify({
           ra: ra,
           materia: materia,
-          dataInicio: dataInicio,
-          dataFim: dataFim,
+          dataInicio: formattedStartDate,
+          dataFim: formattedEndDate
         }),
       }
     );
-    if (response.status === 200) {
-      const data = await response.json();
-      return data;
-    } else {
-      const errorData = await response.json();
-      throw new Error(`${response.status} - ${errorData.message}`);
-    }
+    const data = await response.json();
+    return data
   };
 
   const handleCadastro = async () => {
-    try {
-      const response = await postTutoria();
-      Alert.alert("Cadastrado com sucesso");
-      navigation.navigate("TutoriasCadastradas");
-    } catch (error) {
-      Alert.alert("ERRO!", error.message);
-    }
+      const data = await postTutoria();
+      if (data.status === 200) {
+        Alert.alert("Tutoria Criada");
+      } else {
+        const errorMessage = data.mensagem; 
+        Alert.alert("ERRO!", errorMessage);
+      }
   };
 
-  
+    const startDate = new Date(dataInicio);
+    const endDate = new Date(dataFim);
+    const formattedStartDate = startDate.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const formattedEndDate = endDate.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.fundoS}>
       <View style={styles.fundo}>
         <View style={styles.container}>
           <View style={styles.pickerContainer}>
@@ -109,8 +129,8 @@ export default function CadastrarTutoria() {
         <View style={styles.container}>
 
         </View>
+        <View style={styles.textoRender}><Text>Data e Hora do Inicio da Tutoria</Text></View>
         <View style={styles.container}>
-          <View style={styles.textoRender}><Text>Data e Hora do Inicio da Tutoria</Text></View>
  
           <View style={styles.buttonDataContainer}>
             <TextInputMask
@@ -128,8 +148,8 @@ export default function CadastrarTutoria() {
             />
           </View>
         </View>
-        <View style={styles.container}>
         <View style={styles.textoRender}><Text>Data e Hora do Fim da Tutoria</Text></View>
+        <View style={styles.container}>
           <View style={styles.buttonDataContainer}>
             <TextInputMask
               type={"datetime"}
@@ -169,6 +189,9 @@ const styles = StyleSheet.create({
   fundo: {
     flex: 1,
     alignItems: "center",
+    backgroundColor: "#FFFBC7",
+  },
+  fundoS: {
     backgroundColor: "#FFFBC7",
   },
   buttonContainer: {
@@ -224,6 +247,7 @@ const styles = StyleSheet.create({
   textoRender: {
     textAlign: "center",
     marginBottom: 5,
+    marginTop: 5,
     fontSize: 16,
   },
 });

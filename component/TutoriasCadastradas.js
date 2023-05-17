@@ -133,7 +133,7 @@ export default function TutoriasCadastradas() {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.fundoS}>
       <View style={styles.fundo}>
         <View style={[styles.buttonListContainer, { marginTop: 30 }]}>
           <View style={styles.buttonContainer}>
@@ -174,6 +174,9 @@ const styles = StyleSheet.create({
   fundo: {
     flex: 1,
     alignItems: "center",
+    backgroundColor: "#FFFBC7",
+  },
+  fundoS: {
     backgroundColor: "#FFFBC7",
   },
   buttonContainer: {

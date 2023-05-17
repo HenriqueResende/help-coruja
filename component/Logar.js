@@ -45,24 +45,20 @@ function Logar() {
 
     defToken(token);
     defRa(ra);
-
-    if (response.status === 200) {
-      const data = await response.json();
-      return data;
-    } else {
-      const errorData = await response.json();
-      throw new Error(`${response.status} - ${response.mensagem}`);
-    }
+    
+    return data
 
   };
   const handleLogin = async () => {
-    try {
-    const response = await postLogin();
-    Alert.alert("Logado com sucesso");
-    navigation.navigate("HomeScreen");
-  } catch (error) {
-    Alert.alert("ERRO!", error.message);
-  }
+ 
+    const data = await postLogin();
+    if (data.status === 200) {
+      Alert.alert("Logado com sucesso");
+      navigation.navigate("HomeScreen");
+    } else {
+      const errorMessage = data.mensagem;
+      Alert.alert("ERRO!", errorMessage);
+    }
   };
 
   const handleCadastro = () => {
