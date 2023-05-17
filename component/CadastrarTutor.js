@@ -65,13 +65,13 @@ export default function CadastrarTutor() {
   };
 
   const handleCadastro = async () => {
-    const response = await postTutor();
-
-    if (response.status === 200) {
+    const data = await postTutor();
+    if (data.status === 200) {
       Alert.alert("Cadastrado com sucesso, Agora você pode criar Tutorias.");
       navigation.navigate("HomeScreen");
     } else {
-      Alert.alert("ERRO! Algo deu errado :(");
+      const errorMessage = data.mensagem;
+      Alert.alert("ERRO!", errorMessage);
     }
   };
 

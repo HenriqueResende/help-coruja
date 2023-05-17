@@ -34,19 +34,20 @@ function Cadastrar({ navigation }) {
       }
     );
 
-    await response.json();
+    const data = await response.json();
 
-    return response;
+    return data;
   };
 
   const handleCadastrar = async () => {
-    const response = await postCadastro();
+    const data = await postCadastro();
 
-    if (response.status === 200) {
-      Alert.alert("Cadastradocom sucesso");
+    if (data.status === 200) {
+      Alert.alert("Cadastrado com sucesso");
       navigation.navigate("Logar");
     } else {
-      Alert.alert("ERRO! Algo deu errado :(");
+      const errorMessage = data.mensagem;
+      Alert.alert("ERRO!", errorMessage);
     }
   };
 
