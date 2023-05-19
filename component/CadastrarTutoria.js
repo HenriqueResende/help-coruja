@@ -12,6 +12,8 @@ import { Picker } from "@react-native-picker/picker";
 import { TextInputMask } from "react-native-masked-text";
 import moment from "moment";
 import { useToken } from "../context/tokenContext";
+import { useNavigation } from "@react-navigation/native";
+import { useAula } from "../context/aulaContext";
 
 export default function CadastrarTutoria() {
   const [materia, setMateria] = useState("");
@@ -19,9 +21,10 @@ export default function CadastrarTutoria() {
   const [dataFim, setDataFim] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [materiaOptions, setMateriaOptions] = useState([]);
-  const { token, ra, semestre } = useToken()
+  const { token, ra } = useToken()
+  const { aulas, getAulas } = useAula()
 
-
+  const navigation = useNavigation();  
 
   useEffect(() => {
     getMaterias();
@@ -49,16 +52,24 @@ export default function CadastrarTutoria() {
   const postTutoria = async () => {
     //Api para o login, ela retorna o token para fazer as outras chamadas
 
-    let dateConv = moment(date, 'DD/MM/YYYY HH:mm').add(-(new Date().getTimezoneOffset()), 'minutes').toDate()
+    let dateConvIni = moment(dataInicio, 'DD/MM/YYYY HH:mm').add(-(new Date().getTimezoneOffset()), 'minutes').toDate()
 
-    let dateHasValue = dateConv != undefined && !isNaN(dateConv.getTime())
-    let formattedDate = null
+    let dateIniHasValue = dateConvIni != undefined && !isNaN(dateConvIni.getTime())
+    let formattedIniDate = null
 
-    if (dateHasValue)
-      formattedDate = dateConv.toISOString();
+    if (dateIniHasValue)
+      formattedIniDate = dateConvIni.toISOString();
+
+    let dateConvFim = moment(dataFim, 'DD/MM/YYYY HH:mm').add(-(new Date().getTimezoneOffset()), 'minutes').toDate()
+
+    let dateFimHasValue = dateConvFim != undefined && !isNaN(dateConvFim.getTime())
+    let formattedFimDate = null
+
+    if (dateFimHasValue)
+      formattedFimDate = dateConvFim.toISOString();
 
     const response = await fetch(
-      "https://help-coruja.azurewebsites.net/api/aula/setAula",
+      `https://help-coruja.azurewebsites.net/api/aula/setAula?ra=${ra}&materia=${materia}&dataInicio=${formattedIniDate}&dataFim=${formattedFimDate}`,
       {
         method: "POST",
         headers: {
@@ -66,12 +77,6 @@ export default function CadastrarTutoria() {
           "Content-Type": "application/json",
           'Authorization': 'Bearer ' + token
         },
-        body: JSON.stringify({
-          ra: ra,
-          materia: materia,
-          dataInicio: formattedStartDate,
-          dataFim: formattedEndDate
-        }),
       }
     );
     const data = await response.json();
@@ -80,8 +85,13 @@ export default function CadastrarTutoria() {
 
   const handleCadastro = async () => {
       const data = await postTutoria();
+
       if (data.status === 200) {
         Alert.alert("Tutoria Criada");
+
+        getAulas(token, ra);
+
+        navigation.navigate("TutoriasCadastradas");
       } else {
         const errorMessage = data.mensagem; 
         Alert.alert("ERRO!", errorMessage);

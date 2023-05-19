@@ -9,11 +9,12 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useToken } from "../context/tokenContext";
+import { useAula } from "../context/aulaContext";
 
 export default function TutoriasCadastradas() {
-  const [selectedOptions, setSelectedOptions] = useState([]);
   const navigation = useNavigation();  
-  const { token, ra } = useToken()
+  const { token, ra } = useToken()   
+  const { aulas, getAulas } = useAula()
 
   const handleCriarTutoria = () => {
     // Navigate to the home screen
@@ -21,32 +22,8 @@ export default function TutoriasCadastradas() {
   };
 
   useEffect(() => {
-    getAulas();
+    getAulas(token, ra);
   }, []);
-
-  const handleSearch = () => {
-    getAulas();
-  };
-
-  const getAulas = async () => {
-    try {
-      const response = await fetch(
-        `https://help-coruja.azurewebsites.net/api/aula/getAulaTutor?ra=${ra}`, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Authorization': 'Bearer ' + token
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      setSelectedOptions(JSON.parse(data.json));
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const separador = () => {
     return (
@@ -146,10 +123,10 @@ export default function TutoriasCadastradas() {
           </View>
 
           <View style={styles.list}>
-            {selectedOptions.length > 0 && (
+            {aulas.length > 0 && (
               <FlatList
                 style={{ maxWidth: "80%" }}
-                data={selectedOptions}
+                data={aulas}
                 renderItem={renderiza}
                 keyExtractor={(item) => item.Codigo}
                 ItemSeparatorComponent={separador}

@@ -2,10 +2,12 @@ import { getStateFromPath } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Button, Image } from "react-native";
 import { getApplication } from "react-native-web/dist/cjs/exports/AppRegistry/renderApplication";
+import { useToken } from "../context/tokenContext";
 
 
 export function HomeScreen(props) {
   const [isTutor, setIsTutor] = useState(true);
+  const { token, ra } = useToken()
 
   useEffect(() => {
     getTutor();
@@ -23,19 +25,16 @@ export function HomeScreen(props) {
       });
 
       const data = await response.json();
-      console.log('Data:', data);
-      const isUserTutor = data.length > 0;
-      console.log('Is User Tutor:', isUserTutor);
       
-      const setTutor = isUserTutor;
-      if(setTutor.length>0){
-        setIsTutor = true
+      if(data.status != 200 || JSON.parse(data.json).RA == null){
+        setIsTutor(false)
       }
       else{
-        setIsTutor = false
+        setIsTutor(true)
       }
-
     } catch (error) {
+      setIsTutor(false)
+
       console.log(error);
     }
 
