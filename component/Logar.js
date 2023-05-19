@@ -3,14 +3,12 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   StyleSheet,
   Image,
   Button,
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import HomeScreen from "./Home";
 import { useToken } from "../context/tokenContext";
 
 function Logar() {

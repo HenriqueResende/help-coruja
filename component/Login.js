@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, StyleSheet, Button, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { tokenContext } from "../context/tokenContext";
 
 import Cadastrar from "./Cadastrar";
 import Logar from "./Logar";
@@ -38,7 +37,6 @@ function Login(props) {
 }
 
 export default function TelaLogin() {
-  const [token, setToken] = React.useState("");
 
   return (
     <NavigationContainer independent={true}>

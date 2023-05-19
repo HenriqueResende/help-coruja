@@ -4,11 +4,10 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
+  TextInput,
   ScrollView,
   Alert,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { TextInputMask } from "react-native-masked-text";
 import moment from "moment";
 import { useToken } from "../context/tokenContext";
@@ -19,35 +18,13 @@ export default function CadastrarTutoria() {
   const [materia, setMateria] = useState("");
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [materiaOptions, setMateriaOptions] = useState([]);
   const { token, ra } = useToken()
-  const { aulas, getAulas } = useAula()
+  const { getAulas } = useAula()
 
   const navigation = useNavigation();  
 
   useEffect(() => {
-    getMaterias();
   }, []);
-
-  const getMaterias = async () => {
-    try {
-      const response = await fetch('https://help-coruja.azurewebsites.net/api/materia/getMateria', {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-      });
-
-      const data = await response.json();
-
-      setMateriaOptions(JSON.parse(data.json));
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const postTutoria = async () => {
     //Api para o login, ela retorna o token para fazer as outras chamadas
@@ -121,19 +98,12 @@ export default function CadastrarTutoria() {
       <View style={styles.fundo}>
         <View style={styles.container}>
           <View style={styles.pickerContainer}>
-            <Picker
-              key={materia}
-              prompt="Matéria"
-              selectedValue={materia}
-              onValueChange={setMateria}
-            >
-              <Picker.Item label="Matéria" value={""} />
-              {materiaOptions.map((element) => {
-                return (
-                  <Picker.Item key={element} label={element} value={element} />
-                );
-              })}
-            </Picker>
+            <TextInput
+              style={styles.input}
+              placeholder="Matéria"
+              value={materia}
+              onChangeText={setMateria}
+            />
           </View>
         </View>
         <View style={styles.container}>

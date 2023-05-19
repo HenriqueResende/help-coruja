@@ -1,7 +1,5 @@
-import { getStateFromPath } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Button, Image } from "react-native";
-import { getApplication } from "react-native-web/dist/cjs/exports/AppRegistry/renderApplication";
 import { useToken } from "../context/tokenContext";
 
 

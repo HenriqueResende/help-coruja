@@ -15,7 +15,6 @@ import { useToken } from "../context/tokenContext";
 export default function CadastrarTutor() {
   const [curso, setCurso] = useState("");
   const [semestre, setSemestre] = useState("");
-  const [selectedOptions, setSelectedOptions] = useState([]);
   const [cursoOptions, setCursoOptions] = useState([]);
   const [contato, setContato] = useState("");
   const navigation = useNavigation();
