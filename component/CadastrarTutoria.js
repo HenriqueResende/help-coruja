@@ -46,7 +46,7 @@ export default function CadastrarTutoria() {
       formattedFimDate = dateConvFim.toISOString();
 
     const response = await fetch(
-      `https://help-coruja.azurewebsites.net/api/aula/setAula?ra=${ra}&materia=${materia}&dataInicio=${formattedIniDate}&dataFim=${formattedFimDate}`,
+      `https://help-coruja.azurewebsites.net/api/aula/setAula`,
       {
         method: "POST",
         headers: {
@@ -54,6 +54,12 @@ export default function CadastrarTutoria() {
           "Content-Type": "application/json",
           'Authorization': 'Bearer ' + token
         },
+        body: JSON.stringify({
+          ra: ra,
+          materia: materia,
+          dataInicio: formattedIniDate,
+          dataFim: formattedFimDate,
+        }),
       }
     );
     const data = await response.json();
